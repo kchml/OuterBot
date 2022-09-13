@@ -1,9 +1,10 @@
 import discord
 import responses
 from ds_token import token
+from scraper import weather_scraper
 
-voice = discord.VoiceState(deaf = True, mute = False, self_mute = False, 
-self_deaf = False, self_stream = False, self_video = False, suppress = True, afk = True)
+# voice = discord.VoiceState(deaf = True, mute = False, self_mute = False, 
+# self_deaf = False, self_stream = False, self_video = False, suppress = True, afk = True)
 
 async def on_message(message, user_message, is_private):
     try:
@@ -45,6 +46,7 @@ def run_discord_bot():
             user_message = user_message[1:]
             
             if user_message == 'hello':
+
                 await message.channel.send('hello there')
 
 
@@ -57,6 +59,18 @@ def run_discord_bot():
                 await message.channel.send(message.channel)
             else:
                 pass
+
+            if user_message.startswith('weather'):
+
+                weatherparts = user_message.split(" ")
+
+                city = weatherparts[1]
+
+                weather = weather_scraper(city)
+
+                weather_msg = city + ': ' + weather
+
+                await message.channel.send(weather_msg)
 
 
     client.run(TOKEN)
