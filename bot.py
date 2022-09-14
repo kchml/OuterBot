@@ -1,3 +1,4 @@
+from types import NoneType
 import discord
 import responses
 from ds_token import token
@@ -63,14 +64,13 @@ def run_discord_bot():
             if user_message.startswith('weather'):
 
                 weatherparts = user_message.split(" ")
-
                 city = weatherparts[1]
-
                 weather = weather_scraper(city)
-
-                weather_msg = city + ': ' + weather
-
-                await message.channel.send(weather_msg)
+                if weather != None:
+                    weather_msg = f'In this moment the weather in city {city} is : {weather[0]}\nThere is also a {weather[1]}'
+                    await message.channel.send(weather_msg)
+                else:
+                    pass
 
 
     client.run(TOKEN)
