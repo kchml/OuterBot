@@ -1,4 +1,3 @@
-from types import NoneType
 import discord
 import responses
 from ds_token import token
@@ -19,58 +18,61 @@ async def on_message(message, user_message, is_private):
     except Exception as e:
         print(e)
 
-def run_discord_bot():
-    TOKEN = token()
-    client = discord.Client(intents=discord.Intents.all())
 
-    @client.event
-    async def on_ready():
-        print(f'{client.user} is now running')
+TOKEN = token()
+client = discord.Client(intents=discord.Intents.all())
 
-
-    @client.event
-    async def on_message(message):
-        if message.author == client.user:
-            return
+@client.event
+async def on_ready():
+    print(f'{client.user} is now running')
 
 
-        username = str(message.author)
-        user_message = str(message.content)
-        channel = str(message.channel)
-
-        print(f"{username} said: '{user_message}' ({channel})")
-
-        await message.channel.send(f"{username} said: '{user_message}' ({channel})")
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
 
 
-        if user_message[0] == '$':
-            user_message = user_message[1:]
+    username = str(message.author)
+    user_message = str(message.content)
+    channel = str(message.channel)
+
+#    print(f"{username} said: '{user_message}' ({channel})")
+
+#    await message.channel.send(f"{username} said: '{user_message}' ({channel})")
+
+
+    if user_message[0] == '$':
+        user_message = user_message[1:]
+        
+        if user_message == 'hello':
+            await message.channel.send('hello there')
+
+        if user_message == 'name':
+            await message.channel.send(message.author)
+
+        if user_message == 'channel':
+            await message.channel.send(message.channel)
+
+        if user_message.startswith('weather'):
+
+            weatherparts = user_message.split(" ", 1)
+            city = weatherparts[1]
+            weather = weather_scraper(city)
+            if weather != None:
+                weather_msg = f'Temperature in {city}: {weather}°C'
+                await message.channel.send(weather_msg)
+            else:
+                pass
+
+        if user_message == 'help':
+            help_message = ""
+            help_message = help_message + '$hello - saying hello to you\n'
+            help_message = help_message + '$name - saying your name\n'
+            help_message = help_message + '$channel - saying the channel in which you are\n'
+            help_message = help_message + '$weather <city> - saying the temperature in the city\n'
+
+            await message.channel.send(help_message)
+
             
-            if user_message == 'hello':
-
-                await message.channel.send('hello there')
-
-
-            if user_message == 'name':
-                await message.channel.send(message.author)
-            else:
-                pass
-
-            if user_message == 'channel':
-                await message.channel.send(message.channel)
-            else:
-                pass
-
-            if user_message.startswith('weather'):
-
-                weatherparts = user_message.split(" ")
-                city = weatherparts[1]
-                weather = weather_scraper(city)
-                if weather != None:
-                    weather_msg = f'In this moment the weather in city {city} is : {weather[0]}\nThere is also a {weather[1]}'
-                    await message.channel.send(weather_msg)
-                else:
-                    pass
-
-
-    client.run(TOKEN)
+client.run(TOKEN)
