@@ -1,8 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 from lxml import html as lh
-from ds_token import api_save
+from ds_token import api_save, chrome_path
 from geocoder import geocoder
+from selenium import webdriver
 
 def weather_scraper(city):
 
@@ -17,4 +18,6 @@ def weather_scraper(city):
 
     return temp
 
+def selenium_scraper():
 
+    pass
