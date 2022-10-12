@@ -63,7 +63,7 @@ async def on_message(message):
                 weather_msg = f'Temperature in {city}: {weather}°C'
                 await message.channel.send(weather_msg)
             else:
-                pass
+                await message.channel.send("Can't find that place.")
 
         if user_message == 'help':
             help_message = ""

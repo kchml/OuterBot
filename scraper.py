@@ -8,6 +8,8 @@ from selenium import webdriver
 def weather_scraper(city):
 
     coords = geocoder(city)
+    if coords == None:
+        return None
     key = api_save()
     url = f"https://api.openweathermap.org/data/2.5/weather?lat={coords[0]}&lon={coords[1]}&appid={key}&units=metric"
     head = {'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "

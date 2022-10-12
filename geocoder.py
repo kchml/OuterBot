@@ -10,6 +10,9 @@ def geocoder(city):
             "Chrome/99.0.4844.84 Safari/537.36 OPR/85.0.4341.75"}
     response = requests.get(api_call, headers=head).json()
 
+    if response == []:
+        return None
+
     lat = response[0]['lat']
     lon = response[0]['lon']
 
