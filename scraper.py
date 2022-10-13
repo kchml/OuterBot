@@ -9,17 +9,18 @@ from selenium.webdriver.common.by import By
 def weather_scraper(city):
 
     coords = geocoder(city)
-    if coords == []:
-        return None
-    key = api_save()
-    url = f"https://api.openweathermap.org/data/2.5/weather?lat={coords[0]}&lon={coords[1]}&appid={key}&units=metric"
-    head = {'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/99.0.4844.84 Safari/537.36 OPR/85.0.4341.75"}
-    response = requests.get(url, headers=head).json()
-    temp = response['main']['temp']
+    try:
+        key = api_save()
+        url = f"https://api.openweathermap.org/data/2.5/weather?lat={coords[0]}&lon={coords[1]}&appid={key}&units=metric"
+        head = {'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/99.0.4844.84 Safari/537.36 OPR/85.0.4341.75"}
+        response = requests.get(url, headers=head).json()
+        temp = response['main']['temp']
 
-    return temp
+        return temp
+    except TypeError:
+        return None
 
 def ytlink_scraper(phrase):
 
