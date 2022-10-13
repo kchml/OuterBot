@@ -1,7 +1,7 @@
 import discord
 import responses
 from ds_token import token
-from scraper import weather_scraper
+from scraper import weather_scraper, ytlink_scraper
 
 # voice = discord.VoiceState(deaf = True, mute = False, self_mute = False, 
 # self_deaf = False, self_stream = False, self_video = False, suppress = True, afk = True)
@@ -65,6 +65,17 @@ async def on_message(message):
             else:
                 await message.channel.send("Can't find that place.")
 
+        if user_message.startswith('ytlink'):
+
+            ytlinkparts = user_message.split(" ", 1)
+            phrase = ytlinkparts[1]
+            phrase = phrase.replace(" ", "+")
+            ytlink = ytlink_scraper(phrase)  
+            if ytlink != None:
+                await message.channel.send(ytlink)
+            else:
+                await message.channel.send("Can't find that thing.")
+
         if user_message == 'help':
             help_message = ""
             help_message = help_message + '$hello - saying hello to you\n'
@@ -73,6 +84,7 @@ async def on_message(message):
             help_message = help_message + '$weather <city> - saying the temperature in the city\n'
 
             await message.channel.send(help_message)
+
 
             
 client.run(TOKEN)
