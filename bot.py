@@ -2,9 +2,9 @@ import discord
 import responses
 from ds_token import token
 from scraper import weather_scraper, ytlink_scraper
+from discord.ext import commands
+from discord import FFmpegPCMAudio
 
-# voice = discord.VoiceState(deaf = True, mute = False, self_mute = False, 
-# self_deaf = False, self_stream = False, self_video = False, suppress = True, afk = True)
 
 async def on_message(message, user_message, is_private):
     try:
@@ -20,11 +20,45 @@ async def on_message(message, user_message, is_private):
 
 
 TOKEN = token()
-client = discord.Client(intents=discord.Intents.all())
+client = commands.Bot(intents=discord.Intents.all(), command_prefix = '$')
 
 @client.event
 async def on_ready():
     print(f'{client.user} is now running')
+
+@client.command()
+async def test(ctx):
+    await ctx.send("test passed correctly")
+
+@client.command(pass_context = True)
+async def join(ctx):
+    if (ctx.author.voice):
+        channel = ctx.message.author.voice.channel
+        voice = await channel.connect()
+        source = FFmpegPCMAudio('song.mp3')
+        player = voice.play(source)
+
+    else:
+        await ctx.send("You are not in the voice channel.")
+
+@client.command(pass_context = True)
+async def join(ctx):
+    voice = discord.utils.get(client.voice_clients, guild = ctx.guild)
+    if voice.is_playing():
+        voice.pause()
+    else:
+        await ctx.send("No audio playing at the moment.")
+
+@client.command(pass_context = True)
+async def leave(ctx):
+    if (ctx.voice_client):
+        await ctx.guild.voice_client.disconnect()
+        await ctx.send("Bye, have a great time!")
+    else:
+        await ctx.send('I am not in a voice channel!')
+
+
+
 
 
 @client.event
@@ -32,15 +66,9 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-
     username = str(message.author)
     user_message = str(message.content)
     channel = str(message.channel)
-
-#    print(f"{username} said: '{user_message}' ({channel})")
-
-#    await message.channel.send(f"{username} said: '{user_message}' ({channel})")
-
 
     if user_message[0] == '$':
         user_message = user_message[1:]
@@ -82,9 +110,11 @@ async def on_message(message):
             help_message = help_message + '$name - saying your name\n'
             help_message = help_message + '$channel - saying the channel in which you are\n'
             help_message = help_message + '$weather <city> - saying the temperature in the city\n'
+            help_message = help_message + '$ytlink <phrase> - searching a link to a typed phrase on youtube\n'
 
             await message.channel.send(help_message)
 
+    await client.process_commands(message)
 
             
 client.run(TOKEN)

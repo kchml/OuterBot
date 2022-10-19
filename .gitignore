@@ -5,3 +5,4 @@ __pycache__
 /venv
 /myVenv
 ds_token.py
+*.mp3
