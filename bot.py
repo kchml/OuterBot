@@ -4,6 +4,9 @@ from ds_token import token
 from scraper import weather_scraper, ytlink_scraper
 from discord.ext import commands
 from discord import FFmpegPCMAudio
+import os
+import youtube_dl
+import yt_dlp
 
 
 async def on_message(message, user_message, is_private):
@@ -69,6 +72,40 @@ async def resume(ctx):
 async def stop(ctx):
     voice = discord.utils.get(client.voice_clients, guild = ctx.guild)
     voice.stop()
+
+@client.command(pass_context = True)
+async def ytplay(ctx, url:str):
+    if (ctx.author.voice):
+        channel = ctx.message.author.voice.channel
+        voice = await channel.connect()
+# TODO: webm format is download, change it to mp3
+        ydl_opts = {
+            'format': 'bestaudio',
+            'keepvideo': 'False',
+            'postporcessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            }],
+        }
+
+        with yt_dlp.YoutubeDL(ydl_opts) as ydlp:
+            ydlp.download([url])
+
+        for file in os.listdir('./'):
+            if file.endswith(".mp3"):
+                os.rename(file, 'song.mp3')
+            elif file.endswith('.m4a'):
+                os.rename(file, 'song.mp3')
+            elif file.endswith('.webm'):
+                os.rename(file, 'song.mp3')
+#TODO: song isn't deleted after all, make it do that
+        source = FFmpegPCMAudio('song.mp3')
+        player = voice.play(source)
+
+    else:
+        await ctx.send("You are not in the voice channel.")
+
 
 # @client.command(pass_context = True)
 # async def play(ctx, arg):
