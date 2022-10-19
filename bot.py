@@ -42,7 +42,7 @@ async def join(ctx):
         await ctx.send("You are not in the voice channel.")
 
 @client.command(pass_context = True)
-async def join(ctx):
+async def pause(ctx):
     voice = discord.utils.get(client.voice_clients, guild = ctx.guild)
     if voice.is_playing():
         voice.pause()
@@ -57,9 +57,24 @@ async def leave(ctx):
     else:
         await ctx.send('I am not in a voice channel!')
 
+@client.command(pass_context = True)
+async def resume(ctx):
+    voice = discord.utils.get(client.voice_clients, guild = ctx.guild)
+    if voice.is_paused():
+        voice.resume()
+    else:
+        await ctx.send("Not any song is paused.")
 
+@client.command(pass_context = True)
+async def stop(ctx):
+    voice = discord.utils.get(client.voice_clients, guild = ctx.guild)
+    voice.stop()
 
-
+# @client.command(pass_context = True)
+# async def play(ctx, arg):
+#     voice = ctx.guild.voice_client
+#     source = FFmpegPCMAudio(arg)
+#     player = voice.play(source)
 
 @client.event
 async def on_message(message):
