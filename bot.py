@@ -101,9 +101,6 @@ async def ytplay(ctx, *, url:str):
                 
         source = FFmpegPCMAudio('song.mp3')
         player = voice.play(source)
-        print('kaczka')
-
-
 
     else:
         await ctx.send("You are not in the voice channel.")
